@@ -29,8 +29,12 @@ DATADISK=`lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd" |grep "10G" |awk '{p
 (echo n; echo p; echo 1; echo ; echo ; echo w) | sudo fdisk /dev/${DATADISK}
 sudo mkfs -t ext4 /dev/${DATADISK}1
 sudo mkdir /data && sudo mount /dev/${DATADISK}1 /data
-UUID=`blkid |grep ${DATADISK}1: |awk -F \" '{print $4}'`
-echo -e "UUID=$UUID /data\text4\tdefaults\t0\t2" >> /etc/fstab
+#UUID=`blkid |grep ${DATADISK}1: |awk -F \" '{print $4}'`
+UUID=`lsblk -f |grep ${DATADISK}1 |awk '{print $3}'`
+echo -e "UUID=$UUID /data\text4\tdefaults\t0\t2" > datadisk_fstab
+sudo sh -c 'cat datadisk_fstab >> /etc/fstab'
+rm datadisk_fstab
+
 # FIXME add to FSTAB:
 # UUID=ff0a1d74-cd6f-4127-885b-bd4be0292a0e	/data	ext4	defaults	0	2
 
