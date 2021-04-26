@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #### Update and install required software
 sudo apt-get update
@@ -9,6 +9,9 @@ sudo apt-get install xfce4 xrdp firefox pwgen gedit -y
 sudo systemctl enable xrdp
 echo xfce4-session >$HOME/.xsession
 echo "source $HOME/.profile" >$HOME/.xsessionrc
+# The following fixes crash on Windows client
+# see https://github.com/neutrinolabs/xrdp/issues/302
+sudo sed -i 's/allow_channels=true/allow_channels=false/g' /etc/xrdp/xrdp.ini
 sudo service xrdp restart
 
 # Add tutorial users. We only plan to use one but create a few so we
@@ -35,19 +38,31 @@ echo -e "UUID=$UUID /data\text4\tdefaults\t0\t2" > datadisk_fstab
 sudo sh -c 'cat datadisk_fstab >> /etc/fstab'
 rm datadisk_fstab
 
-# FIXME add to FSTAB:
-# UUID=ff0a1d74-cd6f-4127-885b-bd4be0292a0e	/data	ext4	defaults	0	2
-
 #### Download tutorial data
 cd /data
 sudo wget https://fsl.fmrib.ox.ac.uk/fslcourse/downloads/asl.tar.gz
 sudo tar -xzf asl.tar.gz
+cd
 
 #### Install FSL
 # We run the installer in quiet (non interactive) mode
+FSLDIR=/usr/local/fsl
 sudo wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py
-sudo python fslinstaller.py -E -q -d /usr/local/fsl
+sudo python fslinstaller.py -E -q -d $FSLDIR
 # libquadmath0 is required for FSL
 sudo apt-get install libquadmath0 -y
 # This patch is required in FSL 6.0.4 to make the ASL gui work
-sudo sed -i -e 's/(parent=parent, ready=ready)/(ready=ready, raiseErrors=True)/' /usr/local/fsl/python/oxford_asl/gui/preview_fsleyes.py
+sudo sed -i -e 's/(parent=parent, ready=ready)/(ready=ready, raiseErrors=True)/' $FSLDIR/python/oxford_asl/gui/preview_fsleyes.py
+# Set up environment only for azureuser - the -E switch doesn't appear to work
+python fslinstaller.py -e -q -d $FSLDIR
+
+#### Install quantiphyse
+For some reason there is a root-owned .conda dir here
+sudo rm -rf /home/azureuser/.conda
+$FSLDIR/fslpython/bin/conda init bash
+source /home/azureuser/.bashrc
+conda create -n qp python=3.7
+conda activate qp
+conda install pyside2
+pip install quantiphyse
+
