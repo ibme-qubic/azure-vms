@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Quantiphyse
+Comment=
+Exec=/home/qp/.conda/envs/qp/bin/quantiphyse
+Icon=/home/qp/.conda/envs/qp/lib/python3.7/site-packages/quantiphyse/icons/main_icon.png
+Path=
+Terminal=false
+StartupNotify=false

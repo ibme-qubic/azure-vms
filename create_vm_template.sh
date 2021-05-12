@@ -40,4 +40,4 @@ az vm open-port \
   --output table
 
 # SSH across setup files and scripts
-scp vm_setup.sh *.desktop azureuser@$1.westeurope.cloudapp.azure.com:
+scp vm_setup.sh desktop_files/*.desktop azureuser@$1.westeurope.cloudapp.azure.com:
