@@ -1,30 +1,44 @@
-az account set --subscription "Research Unmanaged"
+# Create a VM from an existing image
+#
+# $1: VM name
+# $2: region
+# $3: admin password
 
-# Need means to remove all resources associated with VM
-#az vm delete \
-#  --resource-group rg-prj-rum-we-RA48HA-1 \
-#  --name ismrm-img
+VMNAME=$1
+REGION=$2
+PWD=$3
 
-az vm create \
-  --resource-group rg-prj-rum-we-RA48HA-1 \
-  --name ismrm-img \
-  --public-ip-address-dns-name ismrm-img \
-  --image UbuntuLTS \
-  --size Standard_DS1_v2 \
-  --data-disk-sizes-gb 10 \
-  --storage-sku Standard_LRS \
-  --nsg-rule SSH \
-  --admin-username azureuser \
-  --admin-password $1 \
-  --output table
+# Basic subscription info
+SUBS=d75dbbe4-ac00-435f-8f41-8f7adba1dbce
+RG=rg-prj-rum-we-RA48HA-1
 
-#  --custom-data vm_setup.sh \
-#  --image /subscriptions/d75dbbe4-ac00-435f-8f41-8f7adba1dbce/resourceGroups/rg-prj-rum-we-RA48HA-1/providers/Microsoft.Compute/galleries/asl_vm_images/images/asl_course_vm_image/versions/1.0.0 \
+# Name of the image gallery, image defition and image version
+SIG_NAME=vm_images
+IMAGE_DEF_NAME=ismrm-image-def
+IMAGE_VERSION=1.0.0
 
+VMSIZE=Standard_D4_v3
+DATADISK_SIZE=10
+
+echo "Starting"
+az vm create --resource-group $RG \
+             --image /subscriptions/$SUBS/resourceGroups/$RG/providers/Microsoft.Compute/galleries/$SIG_NAME/images/$IMAGE_DEF_NAME/versions/$IMAGE_VERSION \
+             --name $VMNAME \
+             --location $REGION \
+             --public-ip-address-dns-name $VMNAME \
+             --size $VMSIZE \
+             --nsg-rule SSH \
+             --admin-username azureuser \
+             --admin-password $PWD \
+             --output table
+echo "Created VM"
+#--data-disk-sizes-gb $DATADISK_SIZE \
+#--storage-sku Standard_LRS \
+            
 # Open RDP port
 az vm open-port \
-  --resource-group rg-prj-rum-we-RA48HA-1 \
-  --name ismrm-img \
+  --resource-group $RG \
+  --name $VMNAME \
   --port 3389 \
   --output table
-
+echo "Opened RDP port"
