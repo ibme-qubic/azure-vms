@@ -4,13 +4,28 @@ import os
 PWDS = "vm_pass.txt"
 NUM_USERS = 4
 
+# VMs with IDs 50+ are intended for tutors:
+# 50: North Europe (Ireland): Alan Stone (Mon)
+# 51: West Europe: Fatemah (Tue), Ilaria (Sat)
+# 52: West US: Moss (Sat, Wed)
+# 53: UK South: Flora (Sat), Ahlam (Mon), Colette (Wed)
+# 54: UK South: Joana (Sat, Wed), Yunus (Sun), Nic (Mon)
+# 55: South East Asia: Tee Yee Kai (Sun)
+# 56: UK South: Paula (all sessions)
+# 57: UK South: Michael (all sessions)
+
 REGION_VMS = {
-    "westeurope" : [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 26],
-    "uksouth" : [4, 13, 14, 15, 28],
-    "eastasia" : [23],
+    "westeurope" : [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 26, 39, 40, 41, 42, 51],
+    "uksouth" : [4, 13, 14, 15, 28, 53, 54, 56, 57],
+    "eastasia" : [23, 38, 43, 49],
     "centralindia" : [29],
-    "eastus" : [3, 16, 17, 18, 19, 20, 24, 27],
-    "westus" : [21, 22, 25],
+    "eastus" : [3, 16, 17, 18, 19, 20, 24, 27, 45, 46, 47, 48],
+    "westus" : [21, 22, 25, 52], # extra?
+    "northeurope" : [50],
+    "southeastasia" : [55],
+    "westcentralus" : [30, 31, 32, 33, 34, 44],
+    "japaneast" : [35, 36],
+    "southcentralus" : [37],
     "uaenorth" : [],
     "australiaeast" : [],
     "brazilsouth" : [],
